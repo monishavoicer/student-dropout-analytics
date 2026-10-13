@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dropout Risk Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="spotify-container">
+        <aside class="sidebar">
+            <header>
+                <h1><i class="fa-solid fa-graduation-cap"></i> Dropout Risk</h1>
+                <p>AI-Powered Analytics</p>
+            </header>
+
+            <section class="sidebar-section upload-section">
+                <h2><i class="fa-solid fa-upload"></i> Upload Data</h2>
+                <label for="upload-button" class="upload-label">
+                    <span>Select a .CSV or .XLSX file</span>
+                </label>
+                <input type="file" id="upload-button" accept=".csv,.xlsx,.xls" hidden/>
+                <button id="analyze-button" disabled>Analyze Data</button>
+                <div id="upload-status"></div>
+            </section>
+            
+            <section class="sidebar-section feature-section">
+                <h2><i class="fa-solid fa-star"></i> Key Risk Factors</h2>
+                <div id="feature-list">
+                    <p class="placeholder-text">Upload data to see key factors.</p>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-content">
+            <section class="summary-cards">
+                <div class="summary-card">
+                    <span class="summary-label">Total Students</span>
+                    <span class="summary-value" id="stat-total">—</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Average Dropout Risk</span>
+                    <span class="summary-value" id="stat-avg-risk">—</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Moderate Risk</span>
+                    <span class="summary-value moderate" id="stat-moderate">—</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">High Risk (Need Attention)</span>
+                    <span class="summary-value attention" id="stat-attention">—</span>
+                </div>
+            </section>
+
+            <section class="add-student-section">
+                <h2><i class="fa-solid fa-user-plus"></i> Add Student</h2>
+                <form id="add-student-form" class="add-student-form" novalidate>
+                    <label class="field">
+                        <span>Student name</span>
+                        <input type="text" id="student-name" placeholder="e.g. Priya Sharma" autocomplete="off">
+                    </label>
+                    <label class="field">
+                        <span>Age</span>
+                        <input type="number" id="student-age" placeholder="15–22" min="15" max="22" step="1">
+                    </label>
+                    <label class="field">
+                        <span>Past failures</span>
+                        <input type="number" id="student-failures" placeholder="0–4" min="0" max="4" step="1">
+                    </label>
+                    <label class="field">
+                        <span>Absences (days)</span>
+                        <input type="number" id="student-absences" placeholder="0–93" min="0" max="93" step="1">
+                    </label>
+                    <label class="field">
+                        <span>Weekly study time</span>
+                        <select id="student-studytime">
+                            <option value="1">Less than 2 hours</option>
+                            <option value="2" selected>2 to 5 hours</option>
+                            <option value="3">5 to 10 hours</option>
+                            <option value="4">More than 10 hours</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Plans higher education?</span>
+                        <select id="student-higher">
+                            <option value="yes" selected>Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Family educational support?</span>
+                        <select id="student-famsup">
+                            <option value="yes" selected>Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Internet at home?</span>
+                        <select id="student-internet">
+                            <option value="yes" selected>Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </label>
+                    <div class="add-student-actions">
+                        <button type="submit" id="add-student-button" class="primary-btn">Add Student</button>
+                        <button type="button" id="reset-demo-button" class="secondary-btn">Reset Demo</button>
+                    </div>
+                </form>
+                <p id="add-student-status" class="form-status"></p>
+            </section>
+
+            <section class="students-section">
+                <h2>Student Risk Assessment</h2>
+                <div class="filter-section">
+                    <button id="filter-all" class="filter-btn active">All Students</button>
+                    <button id="filter-low" class="filter-btn low">Low Risk</button>
+                    <button id="filter-medium" class="filter-btn medium">Moderate Risk</button>
+                    <button id="filter-high" class="filter-btn high">High Risk</button>
+                    <div id="filter-stats"></div>
+                    <button id="export-button" class="export-btn" title="Download all students as CSV">
+                        <i class="fa-solid fa-file-export"></i>Export
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="students-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Dropout Risk</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-tbody">
+                            <tr><td colspan="3">Upload data to view students</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="explanation-section" class="explanation-section">
+                <h2><i class="fa-solid fa-chart-simple"></i> Student Details</h2>
+                <div id="explanation-content">
+                    <p>Select a student to view a detailed assessment.</p>
+                </div>
+            </section>
+
+            <footer>
+                <p>Student Success Analytics Platform</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

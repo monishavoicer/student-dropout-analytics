@@ -1,0 +1,10 @@
+Flask==2.3.3
+flask-cors==4.0.0
+werkzeug==2.3.7
+pandas==3.0.6
+numpy==2.5.4
+scikit-learn==1.9.1
+joblib==1.6.0
+shap==0.53.0
+openai==0.28.0
+openpyxl==3.1.5
