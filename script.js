@@ -1,3 +1,8 @@
+// Local dev serves the page on :8080 and Flask on :5050; when deployed both share one origin
+const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname) && location.port !== '5050'
+    ? 'http://127.0.0.1:5050'
+    : '';
+
 let uploadedFile = null;
 let allStudents = [];
 let currentFilter = 'all';
@@ -72,7 +77,7 @@ async function handleAnalyze() {
 
     try {
         console.log('Starting upload...');
-        const response = await fetch('http://127.0.0.1:5050/api/upload', {
+        const response = await fetch(`${API_BASE}/api/upload`, {
             method: 'POST',
             body: formData
         });
@@ -105,7 +110,7 @@ async function handleAnalyze() {
 async function fetchFeatures() {
     try {
         console.log('Fetching features...');
-        const response = await fetch('http://127.0.0.1:5050/api/features');
+        const response = await fetch(`${API_BASE}/api/features`);
         if (!response.ok) throw new Error('Failed fetching features');
         const features = await response.json();
         renderFeatures(features);
@@ -138,7 +143,7 @@ function renderFeatures(features) {
 async function fetchStudents() {
     try {
         console.log('Fetching students...');
-        const response = await fetch('http://127.0.0.1:5050/api/students');
+        const response = await fetch(`${API_BASE}/api/students`);
         if (!response.ok) throw new Error('Cannot load students');
         const students = await response.json();
         console.log('Students fetched:', students.length);
@@ -227,7 +232,7 @@ async function handleAddStudent(event) {
     setFormStatus('Adding student...');
 
     try {
-        const response = await fetch('http://127.0.0.1:5050/api/students', {
+        const response = await fetch(`${API_BASE}/api/students`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -259,7 +264,7 @@ async function handleExport() {
     const button = document.getElementById('export-button');
     button.disabled = true;
     try {
-        const response = await fetch('http://127.0.0.1:5050/api/export');
+        const response = await fetch(`${API_BASE}/api/export`);
         if (!response.ok) {
             const result = await response.json().catch(() => ({}));
             throw new Error(result.error || `HTTP ${response.status}`);
@@ -286,7 +291,7 @@ async function handleResetDemo() {
     button.disabled = true;
     setFormStatus('Reloading demo data...');
     try {
-        const response = await fetch('http://127.0.0.1:5050/api/reset_demo', { method: 'POST' });
+        const response = await fetch(`${API_BASE}/api/reset_demo`, { method: 'POST' });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
         setFormStatus(`${result.message} (${result.num_students} students)`, 'success');
@@ -395,7 +400,7 @@ async function selectStudent(studentId) {
     
     try {
         console.log('Fetching explanation...');
-        const response = await fetch(`http://127.0.0.1:5050/api/explain_student?student_id=${studentId}`);
+        const response = await fetch(`${API_BASE}/api/explain_student?student_id=${studentId}`);
         console.log('Response status:', response.status);
         
         if (!response.ok) {

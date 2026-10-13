@@ -14,6 +14,9 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DEMO_DATA_PATH = os.path.join(BASE_DIR, "merged_student_data.xlsx")
+
 app = Flask(__name__)
 CORS(app)
 
@@ -480,8 +483,8 @@ def encoded_matrix(df_original):
 def ensure_model():
     global rf_model, feature_columns
     if rf_model is None:
-        rf_model = joblib.load("rf_model.pkl")
-        feature_columns = joblib.load("rf_feature_columns.pkl")
+        rf_model = joblib.load(os.path.join(BASE_DIR, "rf_model.pkl"))
+        feature_columns = joblib.load(os.path.join(BASE_DIR, "rf_feature_columns.pkl"))
 
 def load_dataset(df):
     """Replace the current class list and rebuild the SHAP analyzer."""
@@ -709,7 +712,7 @@ def add_student():
 def reset_demo():
     """Reload the bundled sample dataset, discarding manually added students."""
     try:
-        load_dataset(clean_dataframe(pd.read_excel("merged_student_data.xlsx")))
+        load_dataset(clean_dataframe(pd.read_excel(DEMO_DATA_PATH)))
         return jsonify({"message": "Demo data reloaded", "num_students": len(current_data)})
     except Exception as e:
         traceback.print_exc()
@@ -732,6 +735,12 @@ def explain_student():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": f"Explanation failed: {str(e)}"}), 500
+
+# Start with the demo data so a fresh server (or a new serverless instance) never shows an empty dashboard
+try:
+    load_dataset(clean_dataframe(pd.read_excel(DEMO_DATA_PATH)))
+except Exception:
+    traceback.print_exc()
 
 if __name__ == "__main__":
     print("🚀 Starting Student Dropout Risk Dashboard - FINAL VERSION")
